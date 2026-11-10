@@ -1,11 +1,9 @@
 import {
     CheckCircleOutlined,
-    BookOutlined,
     ToolOutlined,
     CloudServerOutlined,
     DatabaseOutlined,
     CodeOutlined,
-    RocketOutlined,
     ArrowLeftOutlined,
     GithubOutlined,
     NodeIndexOutlined,
@@ -22,7 +20,6 @@ import {
 } from '@ant-design/icons';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { useAppearance } from '@/hooks/use-appearance';
 import { home } from '@/routes';
 
 const backendPackages = [

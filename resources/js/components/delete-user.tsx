@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Form } from '@inertiajs/react';
 import { App, Button, Modal, Input, Typography, Alert, Space } from 'antd';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 
 const { Title, Text, Paragraph } = Typography;

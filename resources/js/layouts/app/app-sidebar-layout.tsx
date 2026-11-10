@@ -1,5 +1,5 @@
 import { Layout, Drawer } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import { useAppearance } from '@/hooks/use-appearance';
@@ -16,11 +16,9 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: AppLayo
     const isDark = resolvedAppearance === 'dark';
 
     // Close mobile drawer when window resizes to desktop
-    useEffect(() => {
-        if (!isMobile) {
-            setMobileOpen(false);
-        }
-    }, [isMobile]);
+    if (!isMobile && mobileOpen) {
+        setMobileOpen(false);
+    }
 
     const sidebarWidth = isMobile ? 0 : (collapsed ? 64 : 240);
     const contentBg = isDark ? '#13131f' : '#f5f6fa';

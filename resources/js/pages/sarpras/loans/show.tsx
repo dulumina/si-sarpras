@@ -6,7 +6,6 @@ import {
 } from '@ant-design/icons';
 import { Head, useForm } from '@inertiajs/react';
 import {
-    App,
     Button,
     Descriptions,
     Input,
@@ -100,7 +99,6 @@ export default function LoanShow({
     can_return,
     can_cancel,
 }: Props) {
-    const { message } = App.useApp();
     const { data, setData, post, processing, reset } = useForm({
         note: '',
         conditions: {} as Record<number, string>,

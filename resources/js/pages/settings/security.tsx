@@ -1,6 +1,6 @@
-import { LockOutlined, SafetyOutlined, SaveOutlined, WarningOutlined } from '@ant-design/icons';
+import { LockOutlined, SafetyOutlined, SaveOutlined } from '@ant-design/icons';
 import { Head, useForm } from '@inertiajs/react';
-import { App, Button, Form, Input, Typography, Card, Alert, Space, Divider } from 'antd';
+import { App, Button, Form, Input, Typography, Alert, Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
@@ -9,7 +9,7 @@ import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import { edit } from '@/routes/security';
 import { disable, enable } from '@/routes/two-factor';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 type Props = {
     canManageTwoFactor?: boolean;

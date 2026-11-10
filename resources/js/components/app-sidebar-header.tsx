@@ -12,7 +12,6 @@ import { Avatar, Breadcrumb, Dropdown, Input } from 'antd';
 import type { MenuProps } from 'antd';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useInitials } from '@/hooks/use-initials';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
 import type { BreadcrumbItem } from '@/types';

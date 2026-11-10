@@ -9,11 +9,9 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { Avatar, Dropdown, Layout, Menu, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
 import {
-    BookOpen,
     Boxes,
     ClipboardList,
     DoorOpen,
-    FolderGit2,
     LayoutGrid,
     MapPin,
     ShieldCheck,
@@ -23,7 +21,6 @@ import {
     Waypoints,
     Zap,
 } from 'lucide-react';
-import { useState } from 'react';
 import { index as permissionIndex } from '@/actions/App/Http/Controllers/Admin/PermissionController';
 import { index as roleIndex } from '@/actions/App/Http/Controllers/Admin/RoleController';
 import { index as userIndex } from '@/actions/App/Http/Controllers/Admin/UserController';

@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, Pagination, Select, Table, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 const { Text } = Typography;
 
@@ -48,15 +48,16 @@ export default function DataTable<T extends Record<string, any>>({
     const [searchValue, setSearchValue] = useState(
         clientSide ? '' : searchProp,
     );
+    const [prevSearchProp, setPrevSearchProp] = useState(searchProp);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
         undefined,
     );
 
-    useEffect(() => {
-        if (!clientSide) {
-            setSearchValue(searchProp);
-        }
-    }, [searchProp, clientSide]);
+    // Adjust state during render when the parent changes the search prop.
+    if (!clientSide && searchProp !== prevSearchProp) {
+        setPrevSearchProp(searchProp);
+        setSearchValue(searchProp);
+    }
 
     const filteredData = useMemo(() => {
         if (!clientSide || !localSearch) {

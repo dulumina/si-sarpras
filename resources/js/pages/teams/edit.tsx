@@ -1,4 +1,4 @@
-import { UserAddOutlined, MailOutlined, EditOutlined, DeleteOutlined, DownOutlined, ExclamationCircleOutlined, UserOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { UserAddOutlined, MailOutlined, EditOutlined, DownOutlined, ExclamationCircleOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { Head, router, useForm } from '@inertiajs/react';
 import { App, Button, Form as AntdForm, Input, Typography, Avatar, List, Tag, Dropdown, Tooltip, Space, Alert, Switch } from 'antd';
 import { useMemo, useState } from 'react';
