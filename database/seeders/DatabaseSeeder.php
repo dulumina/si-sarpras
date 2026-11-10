@@ -15,11 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'superadmin@localhost',
-            'password' => bcrypt('password'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'superadmin@localhost'],
+            ['name' => 'Test User', 'password' => bcrypt('password'), 'email_verified_at' => now()],
+        );
 
         // call RoleAndPermissionSeeder
         $this->call([
