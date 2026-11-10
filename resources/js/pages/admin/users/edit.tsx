@@ -1,7 +1,11 @@
-import { UserOutlined } from '@ant-design/icons';
 import { Head, useForm } from '@inertiajs/react';
-import { App, Button, Card, Form, Input, Select, Space } from 'antd';
-import { index, update } from '@/actions/App/Http/Controllers/Admin/UserController';
+import { App, Button, Form, Input, Select } from 'antd';
+import {
+    index,
+    update,
+} from '@/actions/App/Http/Controllers/Admin/UserController';
+import PageHeader from '@/components/page-header';
+import Panel from '@/components/panel';
 
 interface Props {
     user: {
@@ -26,18 +30,22 @@ export default function UserEdit({ user, availableRoles }: Props) {
     };
 
     return (
-        <div className="p-6">
+        <div className="mx-auto w-full max-w-3xl space-y-6">
             <Head title={`Edit User: ${user.name}`} />
-            <Card
-                title={
-                    <Space>
-                        <UserOutlined />
-                        <span>Edit User: {user.name}</span>
-                    </Space>
-                }
-                className="max-w-2xl"
+            <PageHeader
+                eyebrow="Admin / Users"
+                title={user.name}
+                description={user.email}
+            />
+            <Panel
+                title="Roles"
+                description="Perubahan role berlaku langsung setelah disimpan."
             >
-                <Form layout="vertical" onFinish={onFinish} initialValues={data}>
+                <Form
+                    layout="vertical"
+                    onFinish={onFinish}
+                    initialValues={data}
+                >
                     <Form.Item label="Name">
                         <Input value={user.name} disabled size="large" />
                     </Form.Item>
@@ -54,17 +62,28 @@ export default function UserEdit({ user, availableRoles }: Props) {
                             placeholder="Select roles"
                             value={data.roles}
                             onChange={(value) => setData('roles', value)}
-                            options={availableRoles.map((role) => ({ label: role, value: role }))}
+                            options={availableRoles.map((role) => ({
+                                label: role,
+                                value: role,
+                            }))}
                             size="large"
                         />
                     </Form.Item>
-                    <Form.Item className="mb-0">
-                        <Button type="primary" htmlType="submit" loading={processing} size="large">
+                    <div className="mt-8 flex flex-col-reverse gap-2 border-t border-border pt-6 sm:flex-row sm:justify-end">
+                        <Button size="large" href={index().url}>
+                            Cancel
+                        </Button>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={processing}
+                            size="large"
+                        >
                             Save Changes
                         </Button>
-                    </Form.Item>
+                    </div>
                 </Form>
-            </Card>
+            </Panel>
         </div>
     );
 }

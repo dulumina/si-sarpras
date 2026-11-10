@@ -1,7 +1,11 @@
-import { SafetyCertificateOutlined } from '@ant-design/icons';
 import { Head, useForm } from '@inertiajs/react';
-import { App, Button, Card, Form, Input, Space, Switch } from 'antd';
-import { index, update } from '@/actions/App/Http/Controllers/Admin/RoleController';
+import { App, Button, Form, Input, Switch } from 'antd';
+import {
+    index,
+    update,
+} from '@/actions/App/Http/Controllers/Admin/RoleController';
+import PageHeader from '@/components/page-header';
+import Panel from '@/components/panel';
 
 interface Props {
     role: {
@@ -19,22 +23,29 @@ export default function RoleEdit({ role, availablePermissions }: Props) {
         permissions: role.permissions,
     });
 
-    const groupedPermissions = availablePermissions.reduce((acc, permission) => {
-        let group = 'General';
-        if (permission.includes('.')) {
-            group = permission.split('.')[0];
-        } else if (permission.includes(' ')) {
-            const parts = permission.split(' ');
-            group = parts[parts.length - 1];
-        }
-        
-        const groupName = group.charAt(0).toUpperCase() + group.slice(1);
-        if (!acc[groupName]) {
-            acc[groupName] = [];
-        }
-        acc[groupName].push(permission);
-        return acc;
-    }, {} as Record<string, string[]>);
+    const groupedPermissions = availablePermissions.reduce(
+        (acc, permission) => {
+            let group = 'General';
+
+            if (permission.includes('.')) {
+                group = permission.split('.')[0];
+            } else if (permission.includes(' ')) {
+                const parts = permission.split(' ');
+                group = parts[parts.length - 1];
+            }
+
+            const groupName = group.charAt(0).toUpperCase() + group.slice(1);
+
+            if (!acc[groupName]) {
+                acc[groupName] = [];
+            }
+
+            acc[groupName].push(permission);
+
+            return acc;
+        },
+        {} as Record<string, string[]>,
+    );
 
     const onFinish = () => {
         put(update(role.id).url, {
@@ -44,119 +55,184 @@ export default function RoleEdit({ role, availablePermissions }: Props) {
 
     const togglePermission = (permission: string, checked: boolean) => {
         if (checked) {
-            setData('permissions', [...data.permissions, permission] as never[]);
+            setData('permissions', [
+                ...data.permissions,
+                permission,
+            ] as never[]);
         } else {
-            setData('permissions', data.permissions.filter((p) => p !== permission) as never[]);
+            setData(
+                'permissions',
+                data.permissions.filter((p) => p !== permission) as never[],
+            );
         }
     };
 
     const toggleGroup = (groupPerms: string[], checked: boolean) => {
         if (checked) {
-            const newPermissions = Array.from(new Set([...data.permissions, ...groupPerms]));
+            const newPermissions = Array.from(
+                new Set([...data.permissions, ...groupPerms]),
+            );
             setData('permissions', newPermissions as never[]);
         } else {
-            const newPermissions = data.permissions.filter((p) => !groupPerms.includes(p));
+            const newPermissions = data.permissions.filter(
+                (p) => !groupPerms.includes(p),
+            );
             setData('permissions', newPermissions as never[]);
         }
     };
 
     return (
-        <div className="p-6">
+        <div className="mx-auto w-full max-w-5xl space-y-6">
             <Head title={`Edit Role: ${role.name}`} />
-            <Card
-                title={
-                    <Space>
-                        <SafetyCertificateOutlined />
-                        <span>Edit Role: {role.name}</span>
-                    </Space>
-                }
-                className="max-w-4xl"
-            >
-                <Form layout="vertical" onFinish={onFinish}>
-                    <Form.Item
-                        label="Role Name"
-                        required
-                        validateStatus={errors.name ? 'error' : ''}
-                        help={errors.name}
+            <PageHeader
+                eyebrow="Admin / Roles"
+                title={role.name}
+                description="Ubah nama role dan permission yang melekat padanya."
+            />
+
+            <Form layout="vertical" onFinish={onFinish}>
+                <div className="space-y-6">
+                    <Panel title="Role details">
+                        <Form.Item
+                            label="Role Name"
+                            required
+                            validateStatus={errors.name ? 'error' : ''}
+                            help={errors.name}
+                            className="!mb-0"
+                        >
+                            <Input
+                                placeholder="Enter role name"
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
+                                size="large"
+                                disabled={role.name === 'super-admin'}
+                            />
+                        </Form.Item>
+                    </Panel>
+
+                    <Panel
+                        title="Permissions"
+                        description={`${data.permissions.length} of ${availablePermissions.length} selected`}
+                        actions={
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    size="small"
+                                    onClick={() =>
+                                        setData(
+                                            'permissions',
+                                            availablePermissions as never[],
+                                        )
+                                    }
+                                >
+                                    Select all
+                                </Button>
+                                <Button
+                                    size="small"
+                                    onClick={() =>
+                                        setData('permissions', [] as never[])
+                                    }
+                                >
+                                    Clear
+                                </Button>
+                            </div>
+                        }
                     >
-                        <Input
-                            placeholder="Enter role name"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            size="large"
-                            disabled={role.name === 'super-admin'}
-                        />
-                    </Form.Item>
+                        <div className="space-y-5">
+                            {Object.entries(groupedPermissions).map(
+                                ([group, perms]) => {
+                                    const allChecked = perms.every((p) =>
+                                        data.permissions.includes(p as never),
+                                    );
 
-                    <div className="mb-4">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-lg font-medium">Permissions</span>
-                            <Space>
-                                <Button 
-                                    size="small" 
-                                    onClick={() => setData('permissions', availablePermissions as never[])}
-                                >
-                                    Select All
-                                </Button>
-                                <Button 
-                                    size="small" 
-                                    onClick={() => setData('permissions', [] as never[])}
-                                >
-                                    Deselect All
-                                </Button>
-                            </Space>
-                        </div>
-
-                        {Object.entries(groupedPermissions).map(([group, perms]) => {
-                            const allChecked = perms.every(p => data.permissions.includes(p as never));
-                            
-                            return (
-                                <div key={group} className="mb-6 bg-gray-50/30 p-4 rounded-xl border border-gray-100">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-sm font-bold text-gray-600 uppercase tracking-wider m-0">
-                                            {group}
-                                        </h3>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-400">Select Group</span>
-                                            <Switch 
-                                                size="small" 
-                                                checked={allChecked} 
-                                                onChange={(checked) => toggleGroup(perms, checked)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                        {perms.map((p) => (
-                                            <div 
-                                                key={p} 
-                                                className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                                                    data.permissions.includes(p as never) 
-                                                        ? 'bg-white border-blue-200 shadow-sm' 
-                                                        : 'bg-white/50 border-transparent'
-                                                }`}
-                                            >
-                                                <span className="text-sm text-gray-700">{p}</span>
-                                                <Switch
-                                                    size="small"
-                                                    checked={data.permissions.includes(p as never)}
-                                                    onChange={(checked) => togglePermission(p, checked)}
-                                                />
+                                    return (
+                                        <div
+                                            key={group}
+                                            className="rounded-xl border border-border bg-muted/40 p-4"
+                                        >
+                                            <div className="mb-3 flex items-center justify-between gap-3">
+                                                <h3 className="m-0 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                                                    {group}
+                                                </h3>
+                                                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    Select group
+                                                    <Switch
+                                                        size="small"
+                                                        checked={allChecked}
+                                                        onChange={(checked) =>
+                                                            toggleGroup(
+                                                                perms,
+                                                                checked,
+                                                            )
+                                                        }
+                                                    />
+                                                </label>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                        {errors.permissions && <div className="text-red-500 text-sm mt-1">{errors.permissions}</div>}
-                    </div>
+                                            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+                                                {perms.map((p) => {
+                                                    const checked =
+                                                        data.permissions.includes(
+                                                            p as never,
+                                                        );
 
-                    <Form.Item className="mb-0 mt-8">
-                        <Button type="primary" htmlType="submit" loading={processing} size="large" block>
-                            Save Changes
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Card>
+                                                    return (
+                                                        <div
+                                                            key={p}
+                                                            className={`flex items-center justify-between gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors ${
+                                                                checked
+                                                                    ? 'border-primary/40'
+                                                                    : 'border-border'
+                                                            }`}
+                                                        >
+                                                            <span className="truncate text-sm text-foreground">
+                                                                {p}
+                                                            </span>
+                                                            <Switch
+                                                                size="small"
+                                                                checked={
+                                                                    checked
+                                                                }
+                                                                onChange={(
+                                                                    value,
+                                                                ) =>
+                                                                    togglePermission(
+                                                                        p,
+                                                                        value,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                },
+                            )}
+                        </div>
+                        {errors.permissions && (
+                            <div className="mt-2 text-sm text-destructive">
+                                {errors.permissions}
+                            </div>
+                        )}
+                    </Panel>
+                </div>
+
+                <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <Button size="large" href={index().url}>
+                        Cancel
+                    </Button>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={processing}
+                        size="large"
+                    >
+                        Save Changes
+                    </Button>
+                </div>
+            </Form>
         </div>
     );
 }

@@ -1,10 +1,22 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import {
+    DeleteOutlined,
+    EditOutlined,
+    MoreOutlined,
+    SafetyCertificateOutlined,
+} from '@ant-design/icons';
 import { Head, Link, router } from '@inertiajs/react';
-import { Button, Card, Dropdown, Modal, Space, Tag } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Button, Dropdown, Modal, Tag } from 'antd';
 import type { MenuProps } from 'antd';
-import { create, destroy, edit, index } from '@/actions/App/Http/Controllers/Admin/RoleController';
+import type { ColumnsType } from 'antd/es/table';
+import {
+    create,
+    destroy,
+    edit,
+    index,
+} from '@/actions/App/Http/Controllers/Admin/RoleController';
 import DataTable from '@/components/data-table';
+import PageHeader from '@/components/page-header';
+import Panel from '@/components/panel';
 
 interface Role {
     id: number;
@@ -21,7 +33,13 @@ interface Props {
     search: string;
 }
 
-export default function RoleIndex({ roles, total, page, perPage, search }: Props) {
+export default function RoleIndex({
+    roles,
+    total,
+    page,
+    perPage,
+    search,
+}: Props) {
     const columns: ColumnsType<Role> = [
         {
             title: 'Name',
@@ -76,14 +94,23 @@ export default function RoleIndex({ roles, total, page, perPage, search }: Props
                                 okText: 'Yes',
                                 cancelText: 'No',
                                 okType: 'danger',
-                                onOk: () => router.delete(destroy(record.id).url),
+                                onOk: () =>
+                                    router.delete(destroy(record.id).url),
                             }),
                     },
                 ];
 
                 return (
-                    <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
-                        <Button type="text" icon={<MoreOutlined />} size="small" />
+                    <Dropdown
+                        menu={{ items }}
+                        trigger={['click']}
+                        placement="bottomRight"
+                    >
+                        <Button
+                            type="text"
+                            icon={<MoreOutlined />}
+                            size="small"
+                        />
                     </Dropdown>
                 );
             },
@@ -91,37 +118,51 @@ export default function RoleIndex({ roles, total, page, perPage, search }: Props
     ];
 
     const navigate = (params: Record<string, any>) => {
-        router.get(index().url, { ...params }, { preserveState: true, preserveScroll: true });
+        router.get(
+            index().url,
+            { ...params },
+            { preserveState: true, preserveScroll: true },
+        );
     };
 
     return (
-        <div className="p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto w-full max-w-7xl space-y-6">
             <Head title="Role Management" />
-            <div className="max-w-7xl mx-auto">
-                <Card>
-                    <DataTable
-                        columns={columns}
-                        data={roles}
-                        rowKey="id"
-                        total={total}
-                        page={page}
-                        perPage={perPage}
-                        search={search}
-                        onPageChange={(p) => navigate({ page: p, perPage, search })}
-                        onPerPageChange={(pp) => navigate({ page: 1, perPage: pp, search })}
-                        onSearchChange={(s) => navigate({ page: 1, perPage, search: s })}
-                        searchPlaceholder="Search roles..."
-                        title="Role Management"
-                        extra={
-                            <Link href={create().url}>
-                                <Button type="primary" icon={<SafetyCertificateOutlined />}>
-                                    Add Role
-                                </Button>
-                            </Link>
-                        }
-                    />
-                </Card>
-            </div>
+            <PageHeader
+                eyebrow="Admin"
+                title="Role Management"
+                description="Definisikan role dan kumpulan permission yang melekat padanya."
+                actions={
+                    <Link href={create().url}>
+                        <Button
+                            type="primary"
+                            icon={<SafetyCertificateOutlined />}
+                            size="large"
+                        >
+                            New Role
+                        </Button>
+                    </Link>
+                }
+            />
+            <Panel bodyClassName="p-4 sm:p-6">
+                <DataTable
+                    columns={columns}
+                    data={roles}
+                    rowKey="id"
+                    total={total}
+                    page={page}
+                    perPage={perPage}
+                    search={search}
+                    onPageChange={(p) => navigate({ page: p, perPage, search })}
+                    onPerPageChange={(pp) =>
+                        navigate({ page: 1, perPage: pp, search })
+                    }
+                    onSearchChange={(s) =>
+                        navigate({ page: 1, perPage, search: s })
+                    }
+                    searchPlaceholder="Search roles..."
+                />
+            </Panel>
         </div>
     );
 }

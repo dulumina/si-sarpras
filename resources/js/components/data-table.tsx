@@ -45,8 +45,12 @@ export default function DataTable<T extends Record<string, any>>({
     const [localPage, setLocalPage] = useState(1);
     const [localPerPage, setLocalPerPage] = useState(10);
     const [localSearch, setLocalSearch] = useState('');
-    const [searchValue, setSearchValue] = useState(clientSide ? '' : searchProp);
-    const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+    const [searchValue, setSearchValue] = useState(
+        clientSide ? '' : searchProp,
+    );
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+        undefined,
+    );
 
     useEffect(() => {
         if (!clientSide) {
@@ -58,10 +62,13 @@ export default function DataTable<T extends Record<string, any>>({
         if (!clientSide || !localSearch) {
             return data;
         }
+
         const q = localSearch.toLowerCase();
 
         return data.filter((item) =>
-            Object.values(item).some((val) => String(val).toLowerCase().includes(q)),
+            Object.values(item).some((val) =>
+                String(val).toLowerCase().includes(q),
+            ),
         );
     }, [data, localSearch, clientSide]);
 
@@ -71,9 +78,11 @@ export default function DataTable<T extends Record<string, any>>({
 
     const handleSearchChange = (value: string) => {
         setSearchValue(value);
+
         if (debounceRef.current) {
             clearTimeout(debounceRef.current);
         }
+
         debounceRef.current = setTimeout(() => {
             if (clientSide) {
                 setLocalSearch(value);
@@ -105,28 +114,30 @@ export default function DataTable<T extends Record<string, any>>({
     const endItem = Math.min(page * perPage, total);
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-4">
+        <div className="space-y-5">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex flex-wrap items-center gap-3">
                     {title && (
-                        <Text strong className="text-base">
+                        <Text strong className="text-base text-foreground">
                             {title}
                         </Text>
                     )}
                     {total > 0 && (
-                        <Text type="secondary" className="text-sm">
-                            Total: {total.toLocaleString()} items
-                        </Text>
+                        <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                            {total.toLocaleString()} items
+                        </span>
                     )}
                     {extra}
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                     <Input
-                        prefix={<SearchOutlined className="text-gray-400" />}
+                        prefix={
+                            <SearchOutlined className="text-muted-foreground" />
+                        }
                         placeholder={searchPlaceholder}
                         value={searchValue}
                         onChange={(e) => handleSearchChange(e.target.value)}
-                        className="w-64"
+                        className="w-full sm:w-64"
                         allowClear
                     />
                     <Select
@@ -146,6 +157,7 @@ export default function DataTable<T extends Record<string, any>>({
                 dataSource={clientSide ? filteredData : data}
                 rowKey={rowKey}
                 loading={loading}
+                size="middle"
                 pagination={
                     clientSide
                         ? {
@@ -160,7 +172,7 @@ export default function DataTable<T extends Record<string, any>>({
             />
 
             {!clientSide && total > 0 && (
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
                     <Text type="secondary" className="text-sm">
                         Showing {startItem}-{endItem} of {total} items
                     </Text>
