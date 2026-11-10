@@ -49,6 +49,19 @@ class TeamController extends Controller
     {
         $user = $request->user();
 
+        $registeredScopes = config('team-scopes.scopes', []);
+        $teamScopes = $team->scopes()->get()->keyBy('scope');
+
+        $scopes = collect($registeredScopes)->map(function ($config, $key) use ($teamScopes) {
+            $teamScope = $teamScopes->get($key);
+
+            return [
+                'scope' => $key,
+                'label' => $config['label'],
+                'is_active' => $teamScope?->is_active ?? true,
+            ];
+        })->values();
+
         return Inertia::render('teams/edit', [
             'team' => [
                 'id' => $team->id,
@@ -74,6 +87,7 @@ class TeamController extends Controller
                     'role_label' => $invitation->role->label(),
                     'created_at' => $invitation->created_at->toISOString(),
                 ]),
+            'scopes' => $scopes,
             'permissions' => $user->toTeamPermissions($team),
             'availableRoles' => TeamRole::assignable(),
         ]);

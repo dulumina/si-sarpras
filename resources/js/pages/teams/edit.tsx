@@ -1,6 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { App, Button, Form as AntdForm, Input, Typography, Avatar, List, Tag, Dropdown, Tooltip, Space, Alert, MenuProps } from 'antd';
-import { UserAddOutlined, MailOutlined, EditOutlined, DeleteOutlined, DownOutlined, ExclamationCircleOutlined, UserOutlined, CloseOutlined } from '@ant-design/icons';
+import { App, Button, Form as AntdForm, Input, Typography, Avatar, List, Tag, Dropdown, Tooltip, Space, Alert, Switch } from 'antd';
+import { UserAddOutlined, MailOutlined, EditOutlined, DeleteOutlined, DownOutlined, ExclamationCircleOutlined, UserOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 import CancelInvitationModal from '@/components/cancel-invitation-modal';
 import DeleteTeamModal from '@/components/delete-team-modal';
@@ -9,20 +9,23 @@ import RemoveMemberModal from '@/components/remove-member-modal';
 import { useInitials } from '@/hooks/use-initials';
 import { edit, index, update } from '@/routes/teams';
 import { update as updateMember } from '@/routes/teams/members';
+import { update as updateScopes } from '@/routes/teams/scopes';
 import type {
     RoleOption,
     Team,
     TeamInvitation,
     TeamMember,
     TeamPermissions,
+    TeamScope,
 } from '@/types';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 type Props = {
     team: Team;
     members: TeamMember[];
     invitations: TeamInvitation[];
+    scopes: TeamScope[];
     permissions: TeamPermissions;
     availableRoles: RoleOption[];
 };
@@ -31,6 +34,7 @@ export default function TeamEdit({
     team,
     members,
     invitations,
+    scopes: initialScopes,
     permissions,
     availableRoles,
 }: Props) {
@@ -47,6 +51,8 @@ export default function TeamEdit({
     const { data, setData, patch, processing, errors } = useForm({
         name: team.name,
     });
+
+    const [scopes, setScopes] = useState<TeamScope[]>(initialScopes);
 
     const pageTitle = useMemo(
         () => permissions.canUpdateTeam ? `Edit ${team.name}` : `View ${team.name}`,
@@ -66,6 +72,29 @@ export default function TeamEdit({
         }, {
             preserveScroll: true,
             onSuccess: () => message.success('Member role updated'),
+        });
+    };
+
+    const toggleScope = (scopeKey: string, isActive: boolean) => {
+        const updated = scopes.map((s) =>
+            s.scope === scopeKey ? { ...s, is_active: isActive } : s,
+        );
+
+        setScopes(updated);
+
+        router.put(updateScopes(team.slug).url, {
+            scopes: updated.map((s) => ({
+                scope: s.scope,
+                label: s.label,
+                is_active: s.is_active,
+            })),
+        }, {
+            preserveScroll: true,
+            onSuccess: () => message.success('Data scope updated'),
+            onError: () => {
+                setScopes(scopes);
+                message.error('Failed to update data scope');
+            },
         });
     };
 
@@ -212,8 +241,8 @@ export default function TeamEdit({
                                                 <Button
                                                     danger
                                                     type="text"
-                                                    icon={<CloseOutlined />}
-                                                    onClick={() => confirmCancelInvitation(invitation)}
+                                                icon={<CloseOutlined />}
+                                                onClick={() => confirmCancelInvitation(invitation)}
                                                 />
                                             </Tooltip>
                                         )
@@ -226,6 +255,44 @@ export default function TeamEdit({
                                         }
                                         title={<Text strong>{invitation.email}</Text>}
                                         description={<Tag color="blue" className="rounded-full">{invitation.role_label}</Tag>}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    </section>
+                )}
+
+                {scopes.length > 0 && (
+                    <section className="pt-8 border-t border-gray-100">
+                        <div className="mb-6">
+                            <Title level={4}>Data Scopes</Title>
+                            <Text type="secondary">
+                                Toggle data scoping for each module. When enabled, data is automatically filtered by the current team.
+                            </Text>
+                        </div>
+
+                        <List
+                            dataSource={scopes}
+                            renderItem={(scope) => (
+                                <List.Item
+                                    actions={[
+                                        <Switch
+                                            key="toggle"
+                                            checked={scope.is_active}
+                                            onChange={(checked) => toggleScope(scope.scope, checked)}
+                                            checkedChildren={<CheckOutlined />}
+                                            unCheckedChildren={<CloseOutlined />}
+                                        />,
+                                    ]}
+                                    className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm"
+                                >
+                                    <List.Item.Meta
+                                        title={<Text strong>{scope.label}</Text>}
+                                        description={
+                                            <Text type="secondary">
+                                                {scope.is_active ? 'Scoped by team' : 'Shared across all teams'}
+                                            </Text>
+                                        }
                                     />
                                 </List.Item>
                             )}

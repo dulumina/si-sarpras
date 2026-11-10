@@ -94,6 +94,16 @@ class Team extends Model
     }
 
     /**
+     * Get the team scopes configuration.
+     *
+     * @return HasMany<TeamScope, $this>
+     */
+    public function scopes(): HasMany
+    {
+        return $this->hasMany(TeamScope::class);
+    }
+
+    /**
      * Get the route key for the model.
      */
     public function getRouteKeyName(): string

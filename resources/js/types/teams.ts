@@ -41,3 +41,9 @@ export type RoleOption = {
     value: TeamRole;
     label: string;
 };
+
+export type TeamScope = {
+    scope: string;
+    label: string;
+    is_active: boolean;
+};
