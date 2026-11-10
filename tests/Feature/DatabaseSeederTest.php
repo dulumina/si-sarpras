@@ -15,6 +15,10 @@ test('database seeder populates master data and role users idempotently', functi
         ->and(Room::count())->toBe(4)
         ->and(Asset::count())->toBe(12);
 
+    $superadmin = User::where('email', 'superadmin@localhost')->firstOrFail();
+
+    expect($superadmin->hasRole('super-admin'))->toBeTrue();
+
     foreach (['admin', 'pimpinan', 'pegawai'] as $role) {
         $user = User::where('email', "{$role}@localhost")->firstOrFail();
 

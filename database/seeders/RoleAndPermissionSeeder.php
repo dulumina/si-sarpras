@@ -28,10 +28,13 @@ class RoleAndPermissionSeeder extends Seeder
             'permission.scan', 'permission.store-bulk',
             'category.view', 'category.create', 'category.edit', 'category.delete',
             'location.view', 'location.create', 'location.edit', 'location.delete',
-            'asset.view', 'asset.create', 'asset.edit', 'asset.delete',
+            'asset.view', 'asset.create', 'asset.edit', 'asset.delete', 'asset.scan',
+            'imag.create', 'imag.delete',
             'room.view', 'room.create', 'room.edit', 'room.delete',
             'loan.view', 'loan.create', 'loan.approve',
-            'approval-flow.edit',
+            'loan.handover', 'loan.reject', 'loan.return', 'loan.cancel',
+            'notification.delete', 'notification.mark-read', 'notification.mark-all-read',
+            'approval-flow.edit', 'approval_flow.edit',
         ];
 
         foreach ($permissions as $permission) {
