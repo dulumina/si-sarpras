@@ -1,6 +1,6 @@
+import { PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { Head, Link } from '@inertiajs/react';
 import { Typography, List, Tag, Button, Tooltip, Space } from 'antd';
-import { PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import CreateTeamModal from '@/components/create-team-modal';
 import { edit, index } from '@/routes/teams';
 import type { Team } from '@/types';

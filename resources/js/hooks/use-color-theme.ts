@@ -28,11 +28,13 @@ const getStoredColorKey = (): string => {
     if (typeof window === 'undefined') {
         return 'indigo';
     }
+
     return localStorage.getItem('color_theme') || 'indigo';
 };
 
 const subscribe = (callback: () => void) => {
     listeners.add(callback);
+
     return () => listeners.delete(callback);
 };
 
@@ -50,6 +52,7 @@ export function initializeColorTheme(): void {
     if (typeof window === 'undefined') {
         return;
     }
+
     currentColorKey = getStoredColorKey();
 }
 

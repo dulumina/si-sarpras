@@ -1,6 +1,6 @@
+import { LockOutlined, SafetyOutlined, SaveOutlined, WarningOutlined } from '@ant-design/icons';
 import { Head, useForm } from '@inertiajs/react';
 import { App, Button, Form, Input, Typography, Card, Alert, Space, Divider } from 'antd';
-import { LockOutlined, SafetyOutlined, SaveOutlined, WarningOutlined } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
@@ -47,6 +47,7 @@ export default function Security({
         if (prevTwoFactorEnabled.current && !twoFactorEnabled) {
             clearTwoFactorAuthData();
         }
+
         prevTwoFactorEnabled.current = twoFactorEnabled;
     }, [twoFactorEnabled, clearTwoFactorAuthData]);
 

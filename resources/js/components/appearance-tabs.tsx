@@ -1,5 +1,5 @@
-import { Segmented, Space } from 'antd';
 import { SunOutlined, MoonOutlined, DesktopOutlined } from '@ant-design/icons';
+import { Segmented, Space } from 'antd';
 import type { Appearance } from '@/hooks/use-appearance';
 import { useAppearance } from '@/hooks/use-appearance';
 

@@ -1,6 +1,6 @@
+import { UserOutlined, MailOutlined, SaveOutlined } from '@ant-design/icons';
 import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import { App, Button, Form, Input, Typography, Alert, Space } from 'antd';
-import { UserOutlined, MailOutlined, SaveOutlined } from '@ant-design/icons';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
 import { edit } from '@/routes/profile';

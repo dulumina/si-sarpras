@@ -1,4 +1,3 @@
-import { Head, Link } from '@inertiajs/react';
 import {
     CheckCircleOutlined,
     BookOutlined,
@@ -21,9 +20,10 @@ import {
     CopyOutlined,
     CheckOutlined,
 } from '@ant-design/icons';
+import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 import { useAppearance } from '@/hooks/use-appearance';
 import { home } from '@/routes';
-import { useState } from 'react';
 
 const backendPackages = [
     { name: 'laravel/framework', version: '^13.7', description: 'Laravel framework core', color: '#ea580c' },
@@ -182,6 +182,7 @@ function CodeBlock({ code, note }: { code: string; note?: string }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
+
     return (
         <div>
             <div style={{ background: '#1e1b4b', borderRadius: 10, overflow: 'hidden' }}>
@@ -226,6 +227,7 @@ function CodeBlock({ code, note }: { code: string; note?: string }) {
 
 function PackageCard({ pkg }: { pkg: { name: string; version: string; description: string; color: string } }) {
     const [hov, setHov] = useState(false);
+
     return (
         <div
             onMouseEnter={() => setHov(true)}

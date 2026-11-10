@@ -1,6 +1,3 @@
-import { Link } from '@inertiajs/react';
-import type { PropsWithChildren } from 'react';
-import { Card, Layout, Menu } from 'antd';
 import {
     BgColorsOutlined,
     LockOutlined,
@@ -8,8 +5,11 @@ import {
     TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
-import { useCurrentUrl } from '@/hooks/use-current-url';
+import { Link } from '@inertiajs/react';
+import { Card, Layout, Menu } from 'antd';
+import type { PropsWithChildren } from 'react';
 import { useAppearance } from '@/hooks/use-appearance';
+import { useCurrentUrl } from '@/hooks/use-current-url';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';

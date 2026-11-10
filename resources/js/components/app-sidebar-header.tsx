@@ -1,6 +1,3 @@
-import { Link, router, usePage } from '@inertiajs/react';
-import { Avatar, Breadcrumb, Dropdown, Input } from 'antd';
-import type { MenuProps } from 'antd';
 import {
     BellOutlined,
     LogoutOutlined,
@@ -10,8 +7,11 @@ import {
     MoonOutlined,
     MenuOutlined,
 } from '@ant-design/icons';
-import { useInitials } from '@/hooks/use-initials';
+import { Link, router, usePage } from '@inertiajs/react';
+import { Avatar, Breadcrumb, Dropdown, Input } from 'antd';
+import type { MenuProps } from 'antd';
 import { useAppearance } from '@/hooks/use-appearance';
+import { useInitials } from '@/hooks/use-initials';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
@@ -70,6 +70,7 @@ export function AppSidebarHeader({ breadcrumbs = [], onMobileMenuClick }: AppSid
 
     const breadcrumbItems = breadcrumbs.map((item, index) => {
         const isLast = index === breadcrumbs.length - 1;
+
         return {
             title: isLast ? (
                 <span style={{ color: isDark ? '#e2e8f0' : '#1e293b', fontWeight: 500 }}>
