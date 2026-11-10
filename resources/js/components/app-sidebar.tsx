@@ -1,16 +1,3 @@
-import { Link, router, usePage } from '@inertiajs/react';
-import { Avatar, Dropdown, Layout, Menu, Tooltip } from 'antd';
-import {
-    BookOpen,
-    FolderGit2,
-    LayoutGrid,
-    ShieldCheck,
-    UserCheck,
-    Users,
-    Zap,
-} from 'lucide-react';
-import type { MenuProps } from 'antd';
-import { useState } from 'react';
 import {
     LogoutOutlined,
     MenuFoldOutlined,
@@ -18,15 +5,40 @@ import {
     SettingOutlined,
     SwapOutlined,
 } from '@ant-design/icons';
+import { Link, router, usePage } from '@inertiajs/react';
+import { Avatar, Dropdown, Layout, Menu, Tooltip } from 'antd';
+import type { MenuProps } from 'antd';
+import {
+    BookOpen,
+    Boxes,
+    ClipboardList,
+    DoorOpen,
+    FolderGit2,
+    LayoutGrid,
+    MapPin,
+    ShieldCheck,
+    Tags,
+    UserCheck,
+    Users,
+    Waypoints,
+    Zap,
+} from 'lucide-react';
+import { useState } from 'react';
 import { index as permissionIndex } from '@/actions/App/Http/Controllers/Admin/PermissionController';
 import { index as roleIndex } from '@/actions/App/Http/Controllers/Admin/RoleController';
 import { index as userIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
+import { edit as approvalFlowEdit } from '@/actions/App/Http/Controllers/Sarpras/ApprovalFlowController';
+import { index as assetIndex } from '@/actions/App/Http/Controllers/Sarpras/AssetController';
+import { index as categoryIndex } from '@/actions/App/Http/Controllers/Sarpras/CategoryController';
+import { index as loanIndex } from '@/actions/App/Http/Controllers/Sarpras/LoanRequestController';
+import { index as locationIndex } from '@/actions/App/Http/Controllers/Sarpras/LocationController';
+import { index as roomIndex } from '@/actions/App/Http/Controllers/Sarpras/RoomController';
+import { useAppearance } from '@/hooks/use-appearance';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { dashboard } from '@/routes';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
-import { useAppearance } from '@/hooks/use-appearance';
 
 const { Sider } = Layout;
 
@@ -48,14 +60,56 @@ export function AppSidebar({ collapsed, onCollapse, isMobile }: AppSidebarProps)
     const isDark = resolvedAppearance === 'dark';
 
     const isAdmin = user?.can_access_admin;
+    const canViewAssets = (user?.permissions ?? []).includes('asset.view');
+    const canViewCategories = (user?.permissions ?? []).includes('category.view');
+    const canViewLocations = (user?.permissions ?? []).includes('location.view');
+    const canViewLoans = (user?.permissions ?? []).includes('loan.view');
+    const canViewRooms = (user?.permissions ?? []).includes('room.view');
+    const canEditApprovalFlow = (user?.permissions ?? []).includes('approval-flow.edit');
 
     const getActiveKey = () => {
-        if (isCurrentUrl(dashboardUrl)) return 'dashboard';
+        if (isCurrentUrl(dashboardUrl)) {
+return 'dashboard';
+}
+
+        if (isCurrentUrl(assetIndex().url)) {
+return 'assets';
+}
+
+        if (isCurrentUrl(categoryIndex().url)) {
+return 'categories';
+}
+
+        if (isCurrentUrl(locationIndex().url)) {
+return 'locations';
+}
+
+        if (isCurrentUrl(loanIndex().url)) {
+return 'loans';
+}
+
+        if (isCurrentUrl(roomIndex().url)) {
+return 'rooms';
+}
+
+        if (isCurrentUrl(approvalFlowEdit().url)) {
+return 'approval-flow';
+}
+
         if (isAdmin) {
-            if (isCurrentUrl(userIndex().url)) return 'users';
-            if (isCurrentUrl(roleIndex().url)) return 'roles';
-            if (isCurrentUrl(permissionIndex().url)) return 'permissions';
+            if (isCurrentUrl(userIndex().url)) {
+return 'users';
+}
+
+            if (isCurrentUrl(roleIndex().url)) {
+return 'roles';
+}
+
+            if (isCurrentUrl(permissionIndex().url)) {
+return 'permissions';
+}
         }
+
         return 'dashboard';
     };
 
@@ -66,6 +120,48 @@ export function AppSidebar({ collapsed, onCollapse, isMobile }: AppSidebarProps)
             label: <Link href={dashboardUrl} prefetch>Dashboard</Link>,
         },
     ];
+
+    const sarprasItems: MenuProps['items'] = canViewAssets || canViewCategories || canViewLocations || canViewLoans || canViewRooms || canEditApprovalFlow
+        ? [
+              {
+                  key: 'sarpras-group',
+                  type: 'group',
+                  label: <span className="text-xs font-semibold uppercase tracking-widest opacity-50">Sarana Prasarana</span>,
+                  children: [
+                      canViewAssets && {
+                          key: 'assets',
+                          icon: <Boxes size={16} />,
+                          label: <Link href={assetIndex().url} prefetch>Data Aset</Link>,
+                      },
+                      canViewCategories && {
+                          key: 'categories',
+                          icon: <Tags size={16} />,
+                          label: <Link href={categoryIndex().url} prefetch>Kategori</Link>,
+                      },
+                      canViewLocations && {
+                          key: 'locations',
+                          icon: <MapPin size={16} />,
+                          label: <Link href={locationIndex().url} prefetch>Lokasi</Link>,
+                      },
+                      canViewRooms && {
+                          key: 'rooms',
+                          icon: <DoorOpen size={16} />,
+                          label: <Link href={roomIndex().url} prefetch>Ruangan</Link>,
+                      },
+                      canViewLoans && {
+                          key: 'loans',
+                          icon: <ClipboardList size={16} />,
+                          label: <Link href={loanIndex().url} prefetch>Peminjaman</Link>,
+                      },
+                      canEditApprovalFlow && {
+                          key: 'approval-flow',
+                          icon: <Waypoints size={16} />,
+                          label: <Link href={approvalFlowEdit().url} prefetch>Alur Persetujuan</Link>,
+                      },
+                  ].filter(Boolean) as MenuProps['items'],
+              },
+          ]
+        : [];
 
     const adminItems: MenuProps['items'] = isAdmin ? [
         {
@@ -182,10 +278,10 @@ export function AppSidebar({ collapsed, onCollapse, isMobile }: AppSidebarProps)
                                     className="font-bold text-sm leading-tight truncate"
                                     style={{ color: isDark ? '#e2e8f0' : '#1e293b' }}
                                 >
-                                    Laravel RBAC
+                                    SI-Sarpras
                                 </div>
                                 <div className="text-xs leading-tight" style={{ color: textColor }}>
-                                    Admin Panel
+                                    Sarana Prasarana
                                 </div>
                             </div>
                         )}
@@ -214,6 +310,19 @@ export function AppSidebar({ collapsed, onCollapse, isMobile }: AppSidebarProps)
                             fontSize: 13,
                         }}
                     />
+                    {sarprasItems.length > 0 && (
+                        <Menu
+                            mode="inline"
+                            selectedKeys={[getActiveKey()]}
+                            inlineCollapsed={collapsed}
+                            items={sarprasItems}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                fontSize: 13,
+                            }}
+                        />
+                    )}
                     {isAdmin && (
                         <Menu
                             mode="inline"

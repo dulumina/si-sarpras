@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 /*
@@ -47,4 +50,34 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Create a verified user granted the given spatie permissions.
+ *
+ * @param  array<int, string>  $permissions
+ */
+function sarprasUser(array $permissions = []): User
+{
+    $user = User::factory()->create();
+
+    foreach ($permissions as $name) {
+        Permission::firstOrCreate(['name' => $name]);
+        $user->givePermissionTo($name);
+    }
+
+    return $user;
+}
+
+/**
+ * Create a verified user with a role and optional permissions.
+ *
+ * @param  array<int, string>  $permissions
+ */
+function roleUser(string $role, array $permissions = []): User
+{
+    $user = sarprasUser($permissions);
+    $user->assignRole(Role::firstOrCreate(['name' => $role]));
+
+    return $user;
 }
