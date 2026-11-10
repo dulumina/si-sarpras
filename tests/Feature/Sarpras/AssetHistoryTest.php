@@ -22,8 +22,8 @@ test('updating an asset records field changes', function () {
 
     expect($history->action)->toBe('updated');
     expect($history->changes)->toHaveKeys(['name', 'condition']);
-    expect($history->changes['name'])->toBe(['old' => $oldName, 'new' => 'Proyektor Baru']);
-    expect($history->changes['condition'])->toBe(['old' => 'baik', 'new' => 'rusak']);
+    expect($history->changes['name'])->toEqual(['old' => $oldName, 'new' => 'Proyektor Baru']);
+    expect($history->changes['condition'])->toEqual(['old' => 'baik', 'new' => 'rusak']);
 });
 
 test('archiving an asset records an archived history', function () {
